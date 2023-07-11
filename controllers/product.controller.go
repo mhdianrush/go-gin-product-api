@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"encoding/json"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -64,5 +65,21 @@ func Update(c *gin.Context) {
 }
 
 func Delete(c *gin.Context) {
+	var product entities.Product
 
+	var Input struct {
+		Id json.Number
+	}
+
+	if err := c.ShouldBindJSON(&Input); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		return
+	}
+
+	id, _ := Input.Id.Int64()
+	if config.DB.Delete(&product, id).RowsAffected == 0 {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": "can't delete product data"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "product data has been deleted"})
 }
