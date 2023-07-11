@@ -12,7 +12,7 @@ var DB *gorm.DB
 func ConnectDB() {
 	logger := logrus.New()
 
-	db, err := gorm.Open(mysql.Open("root:admin@tcp(127.0.0.1:3306)/go_gin_restful_api?parseTime=true"), &gorm.Config{})
+	db, err := gorm.Open(mysql.Open("root:admin@tcp(127.0.0.1:3306)/go_gin_product_api?parseTime=true"), &gorm.Config{})
 	if err != nil {
 		panic("failed to connect database")
 	}
