@@ -47,7 +47,20 @@ func Create(c *gin.Context) {
 }
 
 func Update(c *gin.Context) {
+	var product entities.Product
 
+	id := c.Param("id")
+
+	if err := c.ShouldBindJSON(&product); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		return
+	}
+
+	if config.DB.Model(&product).Where("id = ?", id).Updates(&product).RowsAffected == 0 {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": "can't update products data"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "successfull updated products data"})
 }
 
 func Delete(c *gin.Context) {
