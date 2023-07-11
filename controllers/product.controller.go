@@ -1,17 +1,42 @@
 package controllers
 
-import "github.com/gin-gonic/gin"
+import (
+	"net/http"
+
+	"github.com/gin-gonic/gin"
+	"github.com/mhdianrush/go-gin-product-api/config"
+	"github.com/mhdianrush/go-gin-product-api/entities"
+	"gorm.io/gorm"
+)
 
 func Index(c *gin.Context) {
+	var products []entities.Product
 
+	config.DB.Find(&products)
+
+	c.JSON(http.StatusOK, gin.H{"products": products})
 }
 
 func Find(c *gin.Context) {
+	var product entities.Product
 
+	id := c.Param("id")
+
+	if err := config.DB.First(&product, id).Error; err != nil {
+		switch err {
+		case gorm.ErrRecordNotFound:
+			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"message": "data not found"})
+			return
+		default:
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+			return
+		}
+	}
+	c.JSON(http.StatusOK, gin.H{"products": product})
 }
 
 func Create(c *gin.Context) {
-
+	
 }
 
 func Update(c *gin.Context) {
