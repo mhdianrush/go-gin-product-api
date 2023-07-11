@@ -69,6 +69,7 @@ func Delete(c *gin.Context) {
 
 	var Input struct {
 		Id json.Number
+		// means may json in int or string
 	}
 
 	if err := c.ShouldBindJSON(&Input); err != nil {
